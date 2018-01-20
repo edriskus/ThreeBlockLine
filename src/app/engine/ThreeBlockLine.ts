@@ -1,9 +1,14 @@
-import { Scene, Camera, WebGLRenderer, Object3D, PerspectiveCamera, Vector3, PointLight, Line, Geometry, MeshLambertMaterial, LineBasicMaterial, Mesh, BoxBufferGeometry, ShapeGeometry, Shape, ShapeUtils, MeshBasicMaterial, Face3, ExtrudeGeometry, MeshPhongMaterial, Raycaster } from "three";
+import { Scene, Camera, WebGLRenderer, Object3D, PerspectiveCamera, Vector3, PointLight, Line, Geometry, MeshLambertMaterial, LineBasicMaterial, Mesh, BoxBufferGeometry, ShapeGeometry, Shape, ShapeUtils, MeshBasicMaterial, Face3, ExtrudeGeometry, MeshPhongMaterial, Raycaster, log, JSONLoader } from "three";
 import { TBLCube } from "./TBLCube";
 import { TBLFollower } from './TBLFollower';
+import { Subject } from "rxjs/Subject";
 
 export class ThreeBlockLineOptions {
-
+  backgound: number;
+  cube: number;
+  trees: number;
+  path: number;
+  light: number;
 }
 
 export class ThreeBlockLine {
@@ -20,6 +25,11 @@ export class ThreeBlockLine {
 
   private animations: any = {};
 
+  private evts = new Subject();
+  get events() {
+    return this.evts;
+  }
+
   /**
    *
    * @param container - HTML Element that will hold the WebGLRenderer canvas
@@ -28,7 +38,7 @@ export class ThreeBlockLine {
   constructor(
     private container: HTMLElement,
     private audioUrl: string,
-    private options?: ThreeBlockLineOptions
+    private options: (ThreeBlockLineOptions|any)
   ) {
     this.setupThree();
     this.setupPlayer();
@@ -42,12 +52,12 @@ export class ThreeBlockLine {
     this.scene = new Scene();
     this.renderer = new WebGLRenderer();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
-    this.renderer.setClearColor(0xffffff, 1)
+    this.renderer.setClearColor(this.options.background || 0xffffff, 1)
     this.container.appendChild( this.renderer.domElement );
   }
 
   private setupPlayer() {
-    this.player = new TBLCube(this.scene, 0.01);
+    this.player = new TBLCube(this.scene, 0.01, this.options.cube || 0xaaaaaa );
     this.scene.add(this.player.mesh);
     this.animations.player = this.player.animation;
   }
@@ -59,7 +69,7 @@ export class ThreeBlockLine {
   }
 
   private setupEnvironment() {
-    const pointLight = new PointLight(0xffffff);
+    const pointLight = new PointLight(this.options.light || 0xffffff);
     pointLight.position.x = -5;
     pointLight.position.y = -5;
     pointLight.position.z = 10;
@@ -86,6 +96,39 @@ export class ThreeBlockLine {
   }
 
   /**
+   * Add objects
+   */
+  public addScenery(objects: Array<any>) {
+    var mesh;
+    for(let obj of objects) {
+      var loader = new JSONLoader();
+      loader.load(
+        // resource URL
+        obj.dataUrl,
+
+        // onLoad callback
+        ( geometry, materials ) => {
+          var material = new MeshLambertMaterial({ color: obj.color });
+          var object = new Mesh( geometry, material );
+          Object.assign(object.position, obj.position);
+          this.scene.add( object );
+          this.renderScene(0);
+        },
+
+        // onProgress callback
+        function ( xhr ) {
+          console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+        },
+
+        // onError callback
+        function( err ) {
+          console.log( 'An error happened' );
+        }
+      )
+    }
+  }
+
+  /**
    * Initialize a map line
    */
   public loadLine(history: Array<any>, delta: number) {
@@ -108,7 +151,7 @@ export class ThreeBlockLine {
     };
     var geometry = new ExtrudeGeometry( shape, extrudeSettings );
     geometry.translate(0, 0, -1);
-    var mesh = new Mesh( geometry, new MeshPhongMaterial({ color: 0xeeeeee }) );
+    var mesh = new Mesh( geometry, new MeshPhongMaterial({ color: this.options.path || 0xeeeeee }) );
     geometry.computeFaceNormals();
     this.scene.add( mesh );
     let rayCaster;
@@ -148,6 +191,41 @@ export class ThreeBlockLine {
    */
   public lose() {
     this.pause();
+    this.events.next({
+      type: 'LOSE',
+      data: {}
+    })
+  }
+
+  /**
+   * Win game
+   */
+  public win() {
+    this.pause();
+    this.events.next({
+      type: 'WIN',
+      data: {}
+    })
+  }
+
+  /**
+   * Reset game
+   */
+  public reset() {
+    this.player = null;
+    this.follower = null;
+    this.moving = false;
+    this.wasPlayed = false;
+    this.animations = {};
+
+    this.scene.children.splice(0, this.scene.children.length);
+    console.log(this.scene);
+
+    this.setupPlayer();
+    this.setupFollower();
+    this.setupEnvironment();
+    this.setupAudio(this.audioUrl);
+    this.animate(0);
   }
 
   /**
@@ -182,5 +260,12 @@ export class ThreeBlockLine {
    */
   get history() {
     return this.player.followable.history;
+  }
+
+  /**
+   * Get player position
+   */
+  get playerPosition() {
+    return this.player.followable.position;
   }
 }

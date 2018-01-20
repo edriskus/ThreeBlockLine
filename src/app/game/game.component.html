@@ -1,11 +1,52 @@
 <div class="game-container" #game (mousedown)="move()"></div>
 <div class="game-options" [class.visible]="isPaused">
   <div class="row">
+    <h1 class="display-1">Sustabdyta</h1>
     <div class="col col-md-5">
-      <h1>Game is Paused</h1>
+      <p class="text-center mb-0">
+        <a class="link" href="javascript:void(0)" (click)="exportData()">Atsisiųsti kelio duomenis JSON</a>
+      </p>
+      <p class="text-center">
+        <a class="link" href="javascript:void(0)" (click)="exportObjectData()">Atsisiųsti sukurtus objektus JSON</a>
+      </p>
+      <p class="text-center">
+        <a class="btn btn-warning" href="javascript:void(0)" (click)="restart()">
+          Žaisti iš naujo
+        </a>
+      </p>
+      <p class="lead py-3">Norėdami tęsti, spauskite <code>SPACE</code>...</p>
+    </div>
+  </div>
+</div>
+<div class="game-options" [class.visible]="winning">
+  <div class="row">
+    <h1 class="text-success display-1">Laimėjote!</h1>
+    <div class="col col-md-5">
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       <p class="text-center">
         <a class="link" href="javascript:void(0)" (click)="exportData()">Atsisiųsti kelio duomenis JSON</a>
+      </p>
+      <p class="text-center">
+        <a class="link" href="javascript:void(0)" (click)="exportObjectData()">Atsisiųsti sukurtus objektus JSON</a>
+      </p>
+    </div>
+  </div>
+</div>
+<div class="game-options" [class.visible]="losing">
+  <div class="row">
+    <h1 class="text-danger display-1">Nukritote nuo kelio</h1>
+    <div class="col col-md-5">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <p class="text-center">
+        <a class="btn btn-success" href="javascript:void(0)" (click)="restart()">
+          Bandyti dar kartą
+        </a>
+      </p>
+      <p class="text-center">
+        <a class="link" href="javascript:void(0)" (click)="exportData()">Atsisiųsti kelio duomenis JSON</a>
+      </p>
+      <p class="text-center">
+        <a class="link" href="javascript:void(0)" (click)="exportObjectData()">Atsisiųsti sukurtus objektus JSON</a>
       </p>
     </div>
   </div>

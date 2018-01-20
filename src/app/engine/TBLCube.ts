@@ -27,14 +27,15 @@ export class TBLCube {
    */
   constructor(
     private scene: Scene,
-    private delta: number = 0.005
+    private delta: number = 0.005,
+    private color: number
   ) {
     this.object = this.createCube();
   }
 
   private createCube() {
     var geometry = new BoxGeometry( 1, 1, 1 );
-    var material = new MeshLambertMaterial( { color: 0xeb5160 } );
+    var material = new MeshLambertMaterial( { color: this.color } );
     return new Mesh( geometry, material );
   }
 

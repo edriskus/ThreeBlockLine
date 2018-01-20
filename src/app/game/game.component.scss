@@ -7,6 +7,21 @@
     z-index: -50;
 }
 
+.game-logo {
+  width: 100vw;
+  left: 0;
+  top: 0;
+  position: fixed;
+  padding-top: 2rem;
+  img {
+    height: 6rem;
+  }
+  z-index: 1;
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 60%,rgba(255,255,255,0) 100%);
+  padding-bottom: 6rem;
+  pointer-events: none;
+}
+
 .game-options {
   opacity: 0;
   position: fixed;
@@ -22,11 +37,18 @@
     left: 0;
     width: 100vw;
     height: 100vh;
+    &.bg-dark {
+      background: rgba(0,0,0,.75);
+      & > * {
+        color: white !important;
+      }
+    }
   }
   .row {
     display: flex;
+    flex-direction: column;
     height: 100%;
-    align-content: center;
+    align-items: center;
     justify-content: center;
   }
 }
