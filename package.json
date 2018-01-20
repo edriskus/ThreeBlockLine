@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "postinstall": "ng build --prod",
+    "start": "node ./server/bin/www",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -28,7 +29,14 @@
     "rxjs": "^5.5.2",
     "save-as": "^0.1.8",
     "three": "^0.88.0",
-    "zone.js": "^0.8.14"
+    "zone.js": "^0.8.14",
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0",
+    "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
     "@angular/cli": "1.6.0",

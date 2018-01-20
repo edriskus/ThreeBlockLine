@@ -77,6 +77,14 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
   }
 
+  touch() {
+    if(this.game && this.game.isPaused) {
+      this.resume();
+    } else {
+      this.move();
+    }
+  }
+
   public exportedData: string;
 
   constructor() { }
