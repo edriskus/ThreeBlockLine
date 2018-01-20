@@ -146,6 +146,10 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
   }
 
+  get isLoading() {
+    return !this.game || this.game.loading;
+  }
+
   move() {
     if(!this.game) return;
     this.game.move();

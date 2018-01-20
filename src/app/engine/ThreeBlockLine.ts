@@ -89,8 +89,15 @@ export class ThreeBlockLine {
     for(let fn in this.animations) this.animations[fn](change);
   }
 
+  public loading: boolean = false;
   private setupAudio(fileUrl: string) {
+    this.loading = true;
     this.audio = new Audio();
+      this.audio.addEventListener('canplaythrough', () => {
+        this.loading = false;
+        console.log("Can ply");
+
+      }, false);
     this.audio.src = fileUrl;
     this.audio.load();
   }
@@ -172,6 +179,7 @@ export class ThreeBlockLine {
    * Make a move
    */
   public move() {
+    if(this.loading) return;
     if(!this.wasPlayed) {
       this.wasPlayed = true;
       setTimeout(
