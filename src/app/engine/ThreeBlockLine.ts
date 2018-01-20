@@ -1,4 +1,4 @@
-import { Scene, Camera, WebGLRenderer, Object3D, PerspectiveCamera, Vector3, PointLight, Line, Geometry, MeshLambertMaterial, LineBasicMaterial, Mesh, BoxBufferGeometry, ShapeGeometry, Shape, ShapeUtils, MeshBasicMaterial, Face3, ExtrudeGeometry, MeshPhongMaterial } from "three";
+import { Scene, Camera, WebGLRenderer, Object3D, PerspectiveCamera, Vector3, PointLight, Line, Geometry, MeshLambertMaterial, LineBasicMaterial, Mesh, BoxBufferGeometry, ShapeGeometry, Shape, ShapeUtils, MeshBasicMaterial, Face3, ExtrudeGeometry, MeshPhongMaterial, Raycaster } from "three";
 import { TBLCube } from "./TBLCube";
 import { TBLFollower } from './TBLFollower';
 
@@ -109,8 +109,20 @@ export class ThreeBlockLine {
     var geometry = new ExtrudeGeometry( shape, extrudeSettings );
     geometry.translate(0, 0, -1);
     var mesh = new Mesh( geometry, new MeshPhongMaterial({ color: 0xeeeeee }) );
-
+    geometry.computeFaceNormals();
     this.scene.add( mesh );
+    let rayCaster;
+    let rayDirection;
+    this.animations.bounds = (change) => {
+      if(!this.player.mesh) return;
+      rayDirection = Object.assign(new Vector3(), this.player.mesh.position);
+      rayDirection.z -= 3;
+      rayDirection;
+      rayCaster = new Raycaster(this.player.mesh.position, rayDirection.sub(this.player.mesh.position).normalize());
+      if(rayCaster.intersectObjects([mesh]).length < 1) {
+        this.lose();
+      }
+    }
   }
 
   /**
@@ -129,6 +141,13 @@ export class ThreeBlockLine {
       this.resume();
     }
     this.animations.player = this.player.move();
+  }
+
+  /**
+   * Lose game
+   */
+  public lose() {
+    this.pause();
   }
 
   /**

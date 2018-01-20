@@ -13,7 +13,7 @@ export class TBLCube {
       delta: this.delta,
       history: this.history,
       direction: this.direction,
-      position: this.object.position
+      position: this.object ? this.object.position : new Vector3(0,0,0)
     };
   }
 
